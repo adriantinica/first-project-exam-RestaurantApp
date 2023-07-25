@@ -69,23 +69,34 @@ public class RestaurantApp {
             Short quantity  = Short.parseShort(availability.getTextContent().trim());
 
             productsList.add(new Product(idByte, name, new Money(amount, currency), quantity));
-            //System.out.println(productsList.get(i));
-
-            if (productsList.size() >=3) {
-                Product Pizza = productsList.get(0);
-                Product Soup = productsList.get(1);
-                Product Salad = productsList.get(2);
-
-                System.out.println(Pizza);
-                System.out.println(Soup);
-                System.out.println(Salad);
-
-            }
             
-
  
         }
+
+        //if (productsList.size() >=3) {
+        //    Product pizza = productsList.get(0);
+        //    Product soup = productsList.get(1);
+        //    Product salad = productsList.get(2);
+
+        //    System.out.println(pizza);
+        //    System.out.println(soup);
+        //    System.out.println(salad);
+
+        //}
+            
         System.out.println("\n");
+
+
+         Stock stock = new Stock();
+        stock.addItem( 
+            new Item<>(productsList.get(0), productsList.get(0).getQuantity()));
+        stock.addItem( 
+            new Item<>(productsList.get(1),productsList.get(1).getQuantity()));
+        stock.addItem(
+            new Item<>(productsList.get(2),productsList.get(2).getQuantity()));
+
+        System.out.println("Initial Stock: ");
+        System.out.println(stock);
 
         // 2. Interaction with customer.....
 
@@ -95,8 +106,8 @@ public class RestaurantApp {
 
         System.out.println("Today you can serve...\n\t\t1.Pizza \n\t\t2.Soup \n\t\t3.Salad");
 
+       
         String clientOrderConfirm = "YES";
-
         while (clientOrderConfirm.equals("YES")) {
 
             System.out.println();
@@ -111,6 +122,30 @@ public class RestaurantApp {
             
 
         }
+        System.out.println();
+
+        Order cart = new Order(new Client("Paul Gasole", 69408080 ), stock);
+
+
+        
+        Item<Product> item1 = new Item<>( productsList.get(0), productsList.get(0).getQuantity());
+        cart.addItem(item1);
+            
+        Item<Product> item2 = new Item<>(productsList.get(1),productsList.get(1).getQuantity());
+        cart.addItem(item2);
+        Item<Product> item3 = new Item<>( productsList.get(2), productsList.get(2).getQuantity());
+        cart.addItem(item3);
+        
+        System.out.println(cart);  
+        System.out.println(stock);
+        
+
+
+
+
+
+       
+
         
         
 
@@ -133,5 +168,7 @@ public class RestaurantApp {
     }
 }
 
+
+    
 
     
