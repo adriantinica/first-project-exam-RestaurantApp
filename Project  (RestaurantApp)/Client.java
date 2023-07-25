@@ -1,10 +1,10 @@
 public class Client {
     private String name;
-    private Integer phone;
+    private Integer phoneNumber;
 
-    public Client(String name, Integer phone) {
+    public Client(String name, Integer phoneNumber) {
         this.name = name;
-        this.phone = phone;
+        this.phoneNumber = phoneNumber;
     }
 
     public String getName() {
@@ -16,16 +16,16 @@ public class Client {
     }
 
     public Integer getPhone() {
-        return phone;
+        return phoneNumber;
     }
 
-    public void setPhone(Integer phone) {
-        this.phone = phone;
+    public void setPhone(Integer phoneNumber) {
+        this.phoneNumber = phoneNumber;
     }
 
     @Override
     public String toString() {
-        return "Client [name=" + name + ", phone=" + phone + "]";
+        return "Client [name=" + name + ", phone=" + phoneNumber + "]";
     }
 
     
@@ -34,3 +34,4 @@ public class Client {
 
     
 }
+
