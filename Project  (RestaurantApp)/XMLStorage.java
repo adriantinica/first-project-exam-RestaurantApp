@@ -16,13 +16,11 @@ public abstract class XMLStorage {
 
     
 
-    public static  String productsList = null;
+    public static List <Product> productsList = new ArrayList<>();;
 
     public static List<Product> gelELementAsProduct(File file) throws ParserConfigurationException, SAXException, IOException{
         
-        //File file = new File("products.xml");
         
-        List <Product> productsList = new ArrayList<>();
 
         // DOM Parser/ + Factory & Builder & Singleton patterns
 
@@ -30,19 +28,10 @@ public abstract class XMLStorage {
         DocumentBuilder dBuilder = dbFactory.newDocumentBuilder();
         Document document = dBuilder.parse(file);
 
-        //###########   trabversing the DOM and extracting DATA    ######################################################
-
-        //System.out.println(document.getDoctype());
-       
+        //###########   traversing the DOM and extracting DATA    ######################################################
 
         Element root = document.getDocumentElement();
-        //NodeList products = root.getElementsByTagName("product");
-        //Element firstProduct = (Element)products.item(i);
-        //Element productName = (Element) firstProduct.getElementsByTagName("name").item(i);
-
-        // ##############################################################################################################
-
-
+    
         //System.out.println(productName.getTextContent().trim());
         NodeList products = root.getElementsByTagName("product");
         //HW1: Extract the price for first product....
@@ -69,6 +58,11 @@ public abstract class XMLStorage {
 
             productsList.add(new Product(idByte, name, new Money(amount, currency), quantity));
             
+ 
+        }
+        return productsList;
+    }
+}
  
         }
         return productsList;
