@@ -1,10 +1,13 @@
+import java.util.ArrayList;
 import java.util.InputMismatchException;
+import java.util.List;
 
 public final class Order extends ItemRepository {
 
     private Client owner;
     private Money totalCost;
     private ItemRepository stock;
+    private List<Product> orderList; //= new ArrayList();
    
 
     public Order(Client owner, ItemRepository stock) {
@@ -12,12 +15,17 @@ public final class Order extends ItemRepository {
         this.owner = owner;
         this.stock = stock;
         this.totalCost= new Money(0, "MDL");
+        this.orderList = new ArrayList<>();
+    }
+
+    public List<Product> getOrderList() {
+        return orderList;
     }
 
 
     @Override
     public String toString() {
-        return "Cart [owner=" + owner +" \n\ttotalCost"+ totalCost + " ]" + super.toString() ;
+        return " Your  Order [owner=" + owner +" \n\ttotalCost"+ totalCost + " ]\n" + super.toString() ;
     }
 
     // Cart Logic
@@ -48,6 +56,9 @@ public final class Order extends ItemRepository {
             item.setQuantity(stockItem.getQuantity());
             stockItem.setQuantity(0);
             
+        }
+        for (int i = 0; i < item.getQuantity(); i++) {
+            orderList.add(item.getValue());
         }
     }
 
@@ -104,6 +115,8 @@ public final class Order extends ItemRepository {
         } else  if(amount > stockItem.getQuantity()) {
             item.setQuantity((short) (item.getQuantity()+ stockItem.getQuantity()));
             stockItem.setQuantity((short) 0) ;
+            
+
         } else { throw new ValueOutOfRangeException("ERROR: amount can't be negative");}
         
         
@@ -150,12 +163,3 @@ public final class Order extends ItemRepository {
         }
     }
 }
-       
-        
-
-   
-
-
-
-
-
