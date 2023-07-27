@@ -22,15 +22,27 @@ public final class Order extends ItemRepository {
         return orderList;
     }
 
-    public int countOrderedQuantity(List<Product> orderList, Product product) {
-        int count = 0;
-        for (Product p : orderList) {
-            if (p.equals(product)) {
-                count++;
+    public String getTotalCost(){
+        return totalCost.toString();
+    }
+
+  
+    // Method to count the total quantity input for a specific product in the order
+    public int getTotalQuantityForProduct(Product product) {
+        int totalQuantity = 0;
+        for (Product item : orderList) {
+            if (item.getValue().equals(product)) {
+                totalQuantity += item.getQuantity();
             }
         }
-        return count;
+        return totalQuantity;
     }
+
+    public List<Item<Product>> getItems() {
+    return items;
+}
+    
+    
 
 
     @Override
@@ -175,8 +187,7 @@ public final class Order extends ItemRepository {
             super(message);
         }
     }
-}
-       
+} 
         
 
    
