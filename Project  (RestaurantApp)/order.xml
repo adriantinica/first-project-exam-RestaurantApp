@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<order.xml>
+    <order>
+        <clientName>John/Doe</clientName>
+        <clientPhone>12345678</clientPhone>
+        <totalCheck>  [amount=525, currency=MDL]</totalCheck>
+        <product>
+            <name>Pizza</name>
+            <id/>
+            <price>
+                <amount>100</amount>
+                <currency>MDL</currency>
+            </price>
+            <orderedQuantity>4</orderedQuantity>
+        </product>
+        <product>
+            <name>Soup</name>
+            <id/>
+            <price>
+                <amount>45</amount>
+                <currency>MDL</currency>
+            </price>
+            <orderedQuantity>2</orderedQuantity>
+        </product>
+        <product>
+            <name>Salad</name>
+            <id/>
+            <price>
+                <amount>35</amount>
+                <currency>MDL</currency>
+            </price>
+            <orderedQuantity>1</orderedQuantity>
+        </product>
+    </order>
+</order.xml>
