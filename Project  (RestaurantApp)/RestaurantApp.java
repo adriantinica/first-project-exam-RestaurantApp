@@ -22,10 +22,11 @@ public class RestaurantApp {
     public static void main(String[] args) throws Exception {
         
        //1. parsing the XML with the menu and available quantity;
+      
        
         File file = new File("products.xml");
         XMLStorage.getELementAsProduct(file);
-        System.out.println(XMLStorage.productsList);
+        
             
         System.out.println("\n");
 
@@ -40,6 +41,10 @@ public class RestaurantApp {
 
         System.out.println("Initial Stock: ");
         System.out.println(stock);
+
+        
+
+        
        
 
         // 2. Interaction with customer.....
@@ -65,7 +70,7 @@ public class RestaurantApp {
             Byte chosenProduct = in.nextByte();
 
             System.out.print("Choose quantity: ");
-            Short quantityImput = in.nextShort();
+            Short quantityInput = in.nextShort();
 
             System.out.print("Do you want something else ??? (YES/NO): ");
             clientOrderConfirm = in.next().trim().toUpperCase();
@@ -80,35 +85,37 @@ public class RestaurantApp {
 
             if (chosenProduct.equals((Byte.parseByte("1")))) {
 
-                if(quantityImput <0 ) {
+                if(quantityInput <0 ) {
                     throw new  Exception("ERROR: amount can't be negative");
                    
-                } else if(quantityImput > XMLStorage.productsList.get(0).getQuantity()){
+                } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
                     throw new Exception("ERROR: you have exceeded the limit quantity");
                 }
-                Item<Product> item1 = new Item<>( XMLStorage.productsList.get(0), quantityImput );
+                Item<Product> item1 = new Item<>( XMLStorage.productsList.get(0), quantityInput );
                     order.addItem(item1);
+                
+                
                     
 
             } else if (chosenProduct.equals((Byte.parseByte("2")))) {
 
-                if(quantityImput < 0  ){
+                if(quantityInput < 0  ){
                     throw new  Exception("ERROR: amount can't be negative");
                        
-                } else if(quantityImput > XMLStorage.productsList.get(0).getQuantity()){
+                } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
                     throw new Exception("ERROR: you have exceeded the limit quantity");
                 } 
-                Item<Product> item2 = new Item<>(XMLStorage.productsList.get(1),quantityImput );
+                Item<Product> item2 = new Item<>(XMLStorage.productsList.get(1),quantityInput );
                     order.addItem(item2);
 
             } else if (chosenProduct.equals((Byte.parseByte("3")))) {
 
-                if(quantityImput <0  ){
+                if(quantityInput <0  ){
                     throw new  Exception("ERROR: amount can't be negative");   
-                } else if(quantityImput > XMLStorage.productsList.get(0).getQuantity()){
+                } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
                     throw new Exception("ERROR: you have exceeded the limit quantity");
                 } 
-                Item<Product> item3 = new Item<>( XMLStorage.productsList.get(2), quantityImput );
+                Item<Product> item3 = new Item<>( XMLStorage.productsList.get(2), quantityInput );
                    order.addItem(item3);
                     
             }
@@ -148,9 +155,9 @@ public class RestaurantApp {
 
         //############################### Preparing Order document in memory !!!########################################
 
-        DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
         DocumentBuilder  dBuilder = dbFactory.newDocumentBuilder();
-        List<Product> orderList = new ArrayList<>(); // aici ar trebui sa fie indicata lista order, care se afiseaza initial pe ecran
+        //List<Product> orderList = new ArrayList<>(); // aici ar trebui sa fie indicata lista order, care se afiseaza initial pe ecran
         //Empty DOC in memory
         Document document =  dBuilder.newDocument();
 
@@ -179,8 +186,9 @@ public class RestaurantApp {
             Element currency = document.createElement("currency");
             currency.setTextContent(productX.getPrice().getCurrency());
             price.appendChild(currency);
-            Element quantityImput = document.createElement("orderedQuantity");
-            product.appendChild(quantityImput);
+            Element quantity = document.createElement("orderedQuantity");
+            quantity.setTextContent(String.valueOf(quantityInput));
+            product.appendChild(quantity);
 
           
         }
@@ -197,6 +205,11 @@ public class RestaurantApp {
 
 
     }
+}
+
+
+    
+
 }
 
 
