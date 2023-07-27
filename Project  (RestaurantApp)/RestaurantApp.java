@@ -1,5 +1,4 @@
 import java.io.File;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
@@ -10,6 +9,7 @@ import javax.xml.transform.Result;
 import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -49,168 +49,187 @@ public class RestaurantApp {
 
         // 2. Interaction with customer.....
 
-        Scanner in = new Scanner(System.in);
+        try (Scanner in = new Scanner(System.in)) {
+            System.out.println("Wellcome to 'Savoia Bistro' !!! ");
+            System.out.println("Today you can serve...\n\t\t1.Pizza \n\t\t2.Soup \n\t\t3.Salad");
 
-        System.out.println("Wellcome to 'Savoia Bistro' !!! ");
-        System.out.println("Today you can serve...\n\t\t1.Pizza \n\t\t2.Soup \n\t\t3.Salad");
-
-       
-        String clientOrderConfirm = "YES";
-        String clientName = " ";
-        Integer phoneNumber = 0 ;
-        Order order = new Order(new Client(clientName, phoneNumber ), stock);
-
+      
+            String clientOrderConfirm = "YES";
+            String clientName = " ";
+            Integer phoneNumber = 0 ;
+            Order order = new Order(new Client(clientName, phoneNumber ), stock);
 
 
-        while (clientOrderConfirm.equals("YES")) {
+
+            while (clientOrderConfirm.equals("YES")) {
+
+                System.out.println();
+
+                System.out.print("Type the mark number to choose a dish : ");
+                Byte chosenProduct = in.nextByte();
+
+                System.out.print("Choose quantity: ");
+                Short quantityInput = in.nextShort();
+
+                System.out.print("Do you want something else ??? (YES/NO): ");
+                clientOrderConfirm = in.next().trim().toUpperCase();
+                if (!clientOrderConfirm.equals("YES") && !clientOrderConfirm.equals("NO")) {
+                    System.err.println("Please respond with YES/NO");
+                    clientOrderConfirm = in.next().trim().toUpperCase();
+                    
+                }
+                
+                
+               
+
+                if (chosenProduct.equals((Byte.parseByte("1")))) {
+
+                    if(quantityInput <0 ) {
+                        throw new  Exception("ERROR: amount can't be negative");
+                       
+                    } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
+                        throw new Exception("ERROR: you have exceeded the limit quantity");
+                    }
+                    Item<Product> item1 = new Item<>( XMLStorage.productsList.get(0), quantityInput );
+                        order.addItem(item1);
+                    
+                    
+                        
+
+                } else if (chosenProduct.equals((Byte.parseByte("2")))) {
+
+                    if(quantityInput < 0  ){
+                        throw new  Exception("ERROR: amount can't be negative");
+                           
+                    } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
+                        throw new Exception("ERROR: you have exceeded the limit quantity");
+                    } 
+                    Item<Product> item2 = new Item<>(XMLStorage.productsList.get(1),quantityInput );
+                        order.addItem(item2);
+
+                } else if (chosenProduct.equals((Byte.parseByte("3")))) {
+
+                    if(quantityInput <0  ){
+                        throw new  Exception("ERROR: amount can't be negative");   
+                    } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
+                        throw new Exception("ERROR: you have exceeded the limit quantity");
+                    } 
+                    Item<Product> item3 = new Item<>( XMLStorage.productsList.get(2), quantityInput );
+                       order.addItem(item3);
+                        
+                }
+
+               
+                if(clientOrderConfirm.equals("NO")){
+                    System.out.println("Please provide your name and phone number for better communication  ");
+                    System.out.println("Name: ");
+                    clientName = in.next();
+                    System.out.println("phoneNumber: ");
+                    System.out.print("+373 ");
+                    phoneNumber = in.nextInt();
+                    order.getOwner().setName(clientName);
+                    order.getOwner().setPhone(phoneNumber);
+
+                } 
+
+
+                
+               
+
+                
+            }
+            System.out.println();
+            System.out.println(order);
 
             System.out.println();
 
-            System.out.print("Type the mark number to choose a dish : ");
-            Byte chosenProduct = in.nextByte();
+            
 
-            System.out.print("Choose quantity: ");
-            Short quantityInput = in.nextShort();
 
-            System.out.print("Do you want something else ??? (YES/NO): ");
-            clientOrderConfirm = in.next().trim().toUpperCase();
-            if (!clientOrderConfirm.equals("YES") && !clientOrderConfirm.equals("NO")) {
-                System.err.println("Please respond with YES/NO");
-                clientOrderConfirm = in.next().trim().toUpperCase();
+
+            
+            
+            System.out.println("Remaining in the stock (for verification): ");
+            System.out.println(stock);
+
+            //############################### Preparing Order document in memory !!!########################################
+
+            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
+            DocumentBuilder  dBuilder = dbFactory.newDocumentBuilder();
+            //List<Product> orderList = new ArrayList<>(); // aici ar trebui sa fie indicata lista order, care se afiseaza initial pe ecran
+            //Empty DOC in memory
+            Document document =  dBuilder.newDocument();
+
+            // Create a root element "products" to hold all "product" elements
+            Element productsElement = document.createElement("order.xml");
+            document.appendChild(productsElement);
+            //Element client = document.createElement("clientName");
+            //client.setTextContent(order.getOwner().getName());
+            //document.appendChild(client);
+
+            
+            List<Item<Product>> items = order.getItems();
+            Element ordered = document.createElement("order");
+            productsElement.appendChild(ordered);
+
+            Element guestName = document.createElement("clientName");
+            guestName.setTextContent(String.valueOf(order.getOwner().getName()));
+            ordered.appendChild(guestName);
+            Element guestPhone = document.createElement("clientPhone");
+            guestPhone.setTextContent(String.valueOf(order.getOwner().getPhone()));
+            ordered.appendChild(guestPhone);
+
+            Element totalCost = document.createElement("totalCheck");
+            totalCost.setTextContent(String.valueOf(order.getTotalCost()));
+            ordered.appendChild(totalCost);
+
+            for  (int i = 0; i < items.size(); i++) {
+                Item<Product> item = items.get(i);
+                Product productX = item.getValue();
+            
+
+                // Fill the DOC :
+            
+                Element product = document.createElement("product");
+                ordered.appendChild(product);
+                Element name = document.createElement("name");
+                name.setTextContent(productX.getName());
+                product.appendChild(name);
+                Element id = document.createElement("id");
+                product.appendChild(id);
+                Element price = document.createElement("price");
+                product.appendChild(price);
+                Element amount = document.createElement("amount");
+                amount.setTextContent(String.valueOf(productX.getPrice().getAmount()));
+                price.appendChild(amount);
+                Element currency = document.createElement("currency");
+                currency.setTextContent(productX.getPrice().getCurrency());
+                price.appendChild(currency);
+                Element quantity = document.createElement("orderedQuantity");
+                quantity.setTextContent(String.valueOf(item.getQuantity()));
+                product.appendChild(quantity);
                 
+
+              
             }
-            
-            
-           
+            TransformerFactory tFactory = TransformerFactory.newInstance();
+            Transformer t = tFactory.newTransformer();
 
-            if (chosenProduct.equals((Byte.parseByte("1")))) {
+            //pretty print
+            t.setOutputProperty(OutputKeys.INDENT,"yes");
 
-                if(quantityInput <0 ) {
-                    throw new  Exception("ERROR: amount can't be negative");
-                   
-                } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
-                    throw new Exception("ERROR: you have exceeded the limit quantity");
-                }
-                Item<Product> item1 = new Item<>( XMLStorage.productsList.get(0), quantityInput );
-                    order.addItem(item1);
-                
-                
-                    
+            Source src = new DOMSource(document);
 
-            } else if (chosenProduct.equals((Byte.parseByte("2")))) {
+            Result result = new StreamResult(new File("order"));
+            t.transform(src,result);
 
-                if(quantityInput < 0  ){
-                    throw new  Exception("ERROR: amount can't be negative");
-                       
-                } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
-                    throw new Exception("ERROR: you have exceeded the limit quantity");
-                } 
-                Item<Product> item2 = new Item<>(XMLStorage.productsList.get(1),quantityInput );
-                    order.addItem(item2);
-
-            } else if (chosenProduct.equals((Byte.parseByte("3")))) {
-
-                if(quantityInput <0  ){
-                    throw new  Exception("ERROR: amount can't be negative");   
-                } else if(quantityInput > XMLStorage.productsList.get(0).getQuantity()){
-                    throw new Exception("ERROR: you have exceeded the limit quantity");
-                } 
-                Item<Product> item3 = new Item<>( XMLStorage.productsList.get(2), quantityInput );
-                   order.addItem(item3);
-                    
-            }
-
-           
-            if(clientOrderConfirm.equals("NO")){
-                System.out.println("Please provide your name and phone number for better communication  ");
-                System.out.println("Name: ");
-                clientName = in.next();
-                System.out.println("phoneNumber: ");
-                System.out.print("+373 ");
-                phoneNumber = in.nextInt();
-                order.getOwner().setName(clientName);
-                order.getOwner().setPhone(phoneNumber);
-
-            } 
-
-
-            
-           
-
-            
+        } catch (TransformerFactoryConfigurationError e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
         }
-        System.out.println();
-        System.out.println(order);
-
-        System.out.println();
-
-        
-
-
-
-        
-        
-        System.out.println("Remaining in the stock (for verification): ");
-        System.out.println(stock);
-
-        //############################### Preparing Order document in memory !!!########################################
-
-       DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-        DocumentBuilder  dBuilder = dbFactory.newDocumentBuilder();
-        //List<Product> orderList = new ArrayList<>(); // aici ar trebui sa fie indicata lista order, care se afiseaza initial pe ecran
-        //Empty DOC in memory
-        Document document =  dBuilder.newDocument();
-
-        // Create a root element "products" to hold all "product" elements
-        Element productsElement = document.createElement("order.xml");
-        document.appendChild(productsElement);
-
-
-        for (Product productX : order.getOrderList()) {
-
-            // Fill the DOC :
-        
-            Element product = document.createElement("product");
-            productsElement.appendChild(product);
-
-            Element name = document.createElement("name");
-            name.setTextContent(productX.getName());
-            product.appendChild(name);
-            Element id = document.createElement("id");
-            product.appendChild(id);
-            Element price = document.createElement("price");
-            product.appendChild(price);
-            Element amount = document.createElement("amount");
-            amount.setTextContent(String.valueOf(productX.getPrice().getAmount()));  // CONVERT int to String
-            price.appendChild(amount);
-            Element currency = document.createElement("currency");
-            currency.setTextContent(productX.getPrice().getCurrency());
-            price.appendChild(currency);
-            Element quantity = document.createElement("orderedQuantity");
-            quantity.setTextContent(String.valueOf(quantityInput));
-            product.appendChild(quantity);
-
-          
-        }
-        TransformerFactory tFactory = TransformerFactory.newInstance();
-        Transformer t = tFactory.newTransformer();
-
-        //pretty print
-        t.setOutputProperty(OutputKeys.INDENT,"yes");
-
-        Source src = new DOMSource(document);
-
-        Result result = new StreamResult(new File("order"));
-        t.transform(src,result);
 
 
     }
 }
-
-
-    
-
-}
-
 
     
