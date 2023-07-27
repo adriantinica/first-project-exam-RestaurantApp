@@ -7,7 +7,7 @@ public final class Order extends ItemRepository {
     private Client owner;
     private Money totalCost;
     private ItemRepository stock;
-    private List<Product> orderList; //= new ArrayList();
+    private List<Product> orderList;
    
 
     public Order(Client owner, ItemRepository stock) {
@@ -20,6 +20,16 @@ public final class Order extends ItemRepository {
 
     public List<Product> getOrderList() {
         return orderList;
+    }
+
+    public int countOrderedQuantity(List<Product> orderList, Product product) {
+        int count = 0;
+        for (Product p : orderList) {
+            if (p.equals(product)) {
+                count++;
+            }
+        }
+        return count;
     }
 
 
@@ -57,8 +67,11 @@ public final class Order extends ItemRepository {
             stockItem.setQuantity(0);
             
         }
-        for (int i = 0; i < item.getQuantity(); i++) {
-            orderList.add(item.getValue());
+       
+        for (int i = 0; i <= 0; i++) {
+            if (item.getValue() != null) {
+                orderList.add(item.getValue()); // Add the Product, not the Item
+            }
         }
     }
 
@@ -163,3 +176,12 @@ public final class Order extends ItemRepository {
         }
     }
 }
+       
+        
+
+   
+
+
+
+
+
