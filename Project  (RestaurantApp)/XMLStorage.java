@@ -18,7 +18,7 @@ public abstract class XMLStorage {
 
     public static List <Product> productsList = new ArrayList<>();;
 
-    public static List<Product> gelELementAsProduct(File file) throws ParserConfigurationException, SAXException, IOException{
+    public static List<Product> getELementAsProduct(File file) throws ParserConfigurationException, SAXException, IOException{
         
         
 
@@ -58,13 +58,14 @@ public abstract class XMLStorage {
 
             productsList.add(new Product(idByte, name, new Money(amount, currency), quantity));
             
+            
  
         }
         return productsList;
     }
-}
- 
-        }
-        return productsList;
-    }
+
+    
+
+    
+
 }
