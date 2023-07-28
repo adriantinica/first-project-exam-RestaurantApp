@@ -1,21 +1,6 @@
 import java.io.File;
-import java.util.List;
 import java.util.Scanner;
-
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.OutputKeys;
-import javax.xml.transform.Result;
-import javax.xml.transform.Source;
-import javax.xml.transform.Transformer;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-
 
 public class RestaurantApp {
 
@@ -42,10 +27,6 @@ public class RestaurantApp {
         System.out.println("Initial Stock: ");
         System.out.println(stock);
 
-        
-
-        
-       
 
         // 2. Interaction with customer.....
 
@@ -129,14 +110,7 @@ public class RestaurantApp {
                     phoneNumber = in.nextInt();
                     order.getOwner().setName(clientName);
                     order.getOwner().setPhone(phoneNumber);
-
                 } 
-
-
-                
-               
-
-                
             }
             System.out.println();
             System.out.println(order);
@@ -144,90 +118,29 @@ public class RestaurantApp {
             System.out.println();
 
             
-
-
-
-            
-            
             System.out.println("Remaining in the stock (for verification): ");
             System.out.println(stock);
 
-            //############################### Preparing Order document in memory !!!########################################
+            XMLStorage.createOrderXmlFile(order);
+            XMLStorage.copyFile("products.xml", "products_old.xml");
 
-            DocumentBuilderFactory dbFactory = DocumentBuilderFactory.newInstance();
-            DocumentBuilder  dBuilder = dbFactory.newDocumentBuilder();
-            //List<Product> orderList = new ArrayList<>(); // aici ar trebui sa fie indicata lista order, care se afiseaza initial pe ecran
-            //Empty DOC in memory
-            Document document =  dBuilder.newDocument();
-
-            // Create a root element "products" to hold all "product" elements
-            Element productsElement = document.createElement("order.xml");
-            document.appendChild(productsElement);
-            //Element client = document.createElement("clientName");
-            //client.setTextContent(order.getOwner().getName());
-            //document.appendChild(client);
+            XMLStorage.updateProductsXmlFile(stock);
 
             
-            List<Item<Product>> items = order.getItems();
-            Element ordered = document.createElement("order");
-            productsElement.appendChild(ordered);
-
-            Element guestName = document.createElement("clientName");
-            guestName.setTextContent(String.valueOf(order.getOwner().getName()));
-            ordered.appendChild(guestName);
-            Element guestPhone = document.createElement("clientPhone");
-            guestPhone.setTextContent(String.valueOf(order.getOwner().getPhone()));
-            ordered.appendChild(guestPhone);
-
-            Element totalCost = document.createElement("totalCheck");
-            totalCost.setTextContent(String.valueOf(order.getTotalCost()));
-            ordered.appendChild(totalCost);
-
-            for  (int i = 0; i < items.size(); i++) {
-                Item<Product> item = items.get(i);
-                Product productX = item.getValue();
-            
-
-                // Fill the DOC :
-            
-                Element product = document.createElement("product");
-                ordered.appendChild(product);
-                Element name = document.createElement("name");
-                name.setTextContent(productX.getName());
-                product.appendChild(name);
-                Element id = document.createElement("id");
-                product.appendChild(id);
-                Element price = document.createElement("price");
-                product.appendChild(price);
-                Element amount = document.createElement("amount");
-                amount.setTextContent(String.valueOf(productX.getPrice().getAmount()));
-                price.appendChild(amount);
-                Element currency = document.createElement("currency");
-                currency.setTextContent(productX.getPrice().getCurrency());
-                price.appendChild(currency);
-                Element quantity = document.createElement("orderedQuantity");
-                quantity.setTextContent(String.valueOf(item.getQuantity()));
-                product.appendChild(quantity);
-                
-
-              
-            }
-            TransformerFactory tFactory = TransformerFactory.newInstance();
-            Transformer t = tFactory.newTransformer();
-
-            //pretty print
-            t.setOutputProperty(OutputKeys.INDENT,"yes");
-
-            Source src = new DOMSource(document);
-
-            Result result = new StreamResult(new File("order"));
-            t.transform(src,result);
 
         } catch (TransformerFactoryConfigurationError e) {
             // TODO Auto-generated catch block
             e.printStackTrace();
         }
 
+        
+
+        // create a copy of a products.xml
+        
+        
+
+    }
+}
 
     }
 }
